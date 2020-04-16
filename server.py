@@ -12,19 +12,26 @@ class IndexHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.render('index.html')
 
-class rawFileCountHandler(tornado.web.RequestHandler):
+class preFileCountHandler(tornado.web.RequestHandler):
 	def get(self):
-		rawPath=os.getcwd()+"/raw"
-		rawFileCnt=os.listdir(rawPath)
-		self.write(str(rawFileCnt))
+		prePath=os.getcwd()+"/pre"
+		preFileCnt=os.listdir(prePath)
+		self.write(str(preFileCnt))
 
+class tagFileCountHandler(tornado.web.RequestHandler):
+	def get(self):
+		dataPath=os.getcwd()+"/data"
+		dataFileCnt=os.listdir(dataPath)
+		self.write(str(dataFileCnt))
 
 if __name__ == '__main__':
 	tornado.options.parse_command_line()
 	app = tornado.web.Application(
 		handlers=[
 		(r'/', IndexHandler), 
-		(r'/rawFileCount',rawFileCountHandler)],
+		(r'/preFileCount',preFileCountHandler),
+		(r'/tagFileCount',tagFileCountHandler),
+		]
 	)
 	http_server = tornado.httpserver.HTTPServer(app)
 	http_server.listen(options.port)

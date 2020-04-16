@@ -6,18 +6,27 @@
 	</head>
     <body>
 		<p id=cnt></p>
-		<button id="rawFileCount">查看生语料文件数量</button>
+		<button id="preFileCount">查看预处理文件数量</button>
+		<button id="tagFileCount">查看已标注文件数量</button>
 	</body>
-
+	
+	
 	<script>
-		$("#rawFileCount").click(function(){
-				$.get("/rawFileCount",function(data,status){
+		$("#preFileCount").click(function(){
+				$.get("/preFileCount",function(data,status){
 						//返回数据data,返回状态status
 						if(status=="success"){
-							document.getElementById('cnt').innerHTML="生语料"+data;
+							document.getElementById('cnt').innerHTML="预处理"+data;
 						}
 				});
 		});
-
+		$("#tagFileCount").click(function(){
+				$.get("/tagFileCount",function(data,status){
+						//返回数据data,返回状态status
+						if(status=="success"){
+							document.getElementById('cnt').innerHTML="已标注"+data;
+						}
+				});
+		});
 	</script>	
 </html>
