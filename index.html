@@ -6,15 +6,15 @@
 	</head>
     <body>
 		<p id=cnt></p>
-		<button id="fileCount">查看语料文件数量</button>
+		<button id="rawFileCount">查看生语料文件数量</button>
 	</body>
 
 	<script>
-		$("#fileCount").click(function(){
-				$.get("/fileCount",function(data,status){
+		$("#rawFileCount").click(function(){
+				$.get("/rawFileCount",function(data,status){
 						//返回数据data,返回状态status
 						if(status=="success"){
-							document.getElementById('cnt').innerHTML=data;
+							document.getElementById('cnt').innerHTML="生语料"+data;
 						}
 				});
 		});
