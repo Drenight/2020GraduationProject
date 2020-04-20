@@ -24,6 +24,14 @@ class tagFileCountHandler(tornado.web.RequestHandler):
 		dataFileCnt=os.listdir(dataPath)
 		self.write(str(dataFileCnt))
 
+class showFileHandler(tornado.web.RequestHandler):
+	def get(self):
+		dataPath=os.getcwd()+"/data/"
+		dataPath+=str(self.get_argument("message"))
+		f=open(dataPath,'r')
+		self.write(str(f.read()))
+
+
 if __name__ == '__main__':
 	tornado.options.parse_command_line()
 	app = tornado.web.Application(
@@ -31,6 +39,7 @@ if __name__ == '__main__':
 		(r'/', IndexHandler), 
 		(r'/preFileCount',preFileCountHandler),
 		(r'/tagFileCount',tagFileCountHandler),
+		(r'/showFile',showFileHandler),
 		]
 	)
 	http_server = tornado.httpserver.HTTPServer(app)

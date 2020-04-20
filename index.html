@@ -5,9 +5,16 @@
 		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script> 
 	</head>
     <body>
+		
 		<p id=cnt></p>
 		<button id="preFileCount">查看预处理文件数量</button>
 		<button id="tagFileCount">查看已标注文件数量</button>
+		<br>------------------------------------------------------------<br>
+		<button id="showFile">查看文件</button>
+		<input type="text" name="fileName" id="fileName">想查看的文件名字<br>
+		<!--<xmp><p id=fileText></p></xmp>-->
+		<xmp id=fileText></xmp>
+
 	</body>
 	
 	
@@ -28,5 +35,18 @@
 						}
 				});
 		});
+
+		$("#showFile").click(function(){
+				var fileName=$("#fileName").val();
+				$.get("/showFile",{message:fileName},function(data,status){
+						if(status=="success"){
+							document.getElementById('fileText').innerHTML=data;
+						}
+						else{
+							alert("Ajax 失败");
+						}
+				});
+		});
+
 	</script>	
 </html>
