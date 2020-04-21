@@ -26,7 +26,7 @@ class tagFileCountHandler(tornado.web.RequestHandler):
 
 class showFileHandler(tornado.web.RequestHandler):
 	def get(self):
-		dataPath=os.getcwd()+"/data/"
+		dataPath=str(os.getcwd())
 		dataPath+=str(self.get_argument("message"))
 		f=open(dataPath,'r')
 		self.write(str(f.read()))

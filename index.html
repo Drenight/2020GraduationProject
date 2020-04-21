@@ -9,14 +9,22 @@
 		<p id=cnt></p>
 		<button id="preFileCount">查看预处理文件数量</button>
 		<button id="tagFileCount">查看已标注文件数量</button>
-		<br>------------------------------------------------------------<br>
-		<button id="showFile">查看文件</button>
+		<br>----------------------------------------------------------------------<br>
 		<input type="text" name="fileName" id="fileName">想查看的文件名字<br>
+		/data:已标注<br>
+		/pre:已预处理<br>
+		例：/data/chtb_0001.xml<br>
+		<button id="showFile">查看文件</button>
+		<br>
 		<!--<xmp><p id=fileText></p></xmp>-->
 		<xmp id=fileText></xmp>
+		<br>----------------------------------------------------------------------<br>
+	
+		<button id="buildTree">展示该语料篇章结构</button>
 
 	</body>
 	
+	<!-----------------------------------script-------------------------------------->
 	
 	<script>
 		$("#preFileCount").click(function(){
@@ -47,6 +55,11 @@
 						}
 				});
 		});
+
+		$("#buildTree").click(function(){
+		
+		});
+
 
 	</script>	
 </html>
