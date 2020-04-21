@@ -8,6 +8,9 @@ import tornado.web
 from tornado.options import define, options
 define("port", default=8000, help="run on the given port", type=int)
 
+#正在展示的文件名全局变量
+fileShowed="-1"
+
 class IndexHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.render('index.html')
@@ -28,8 +31,26 @@ class showFileHandler(tornado.web.RequestHandler):
 	def get(self):
 		dataPath=str(os.getcwd())
 		dataPath+=str(self.get_argument("message"))
+
+		global fileShowed
+		fileShowed=dataPath
+
 		f=open(dataPath,'r')
 		self.write(str(f.read()))
+
+class buildTreeHandler(tornado.web.RequestHandler):
+	def get(self):
+		f=open(fileShowed,'r')
+		line=f.readline()
+		flag=0
+		while line:
+			if(line.strip() == "<RELATION>"):
+				flag=1
+			if(line.strip() == "</RELATION>"):
+				break
+			if(flag==1):
+				#todo----------------------------------
+			line = f.readline()
 
 
 if __name__ == '__main__':
@@ -40,8 +61,10 @@ if __name__ == '__main__':
 		(r'/preFileCount',preFileCountHandler),
 		(r'/tagFileCount',tagFileCountHandler),
 		(r'/showFile',showFileHandler),
+		(r'/buildTree',buildTreeHandler),
 		]
 	)
 	http_server = tornado.httpserver.HTTPServer(app)
 	http_server.listen(options.port)
 	tornado.ioloop.IOLoop.instance().start()
+

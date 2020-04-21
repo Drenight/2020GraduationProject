@@ -57,7 +57,12 @@
 		});
 
 		$("#buildTree").click(function(){
-		
+						$.get("/buildTree",function(data,status){
+						//返回数据data,返回状态status
+						if(status=="success"){
+							
+						}
+				});
 		});
 
 
