@@ -12,6 +12,29 @@ define("port", default=8000, help="run on the given port", type=int)
 #正在展示的文件名全局变量
 fileShowed="-1"
 
+class Tree:		#{[(,,),()],[]}
+	root = 1
+	tree={}
+	nodeName={}		##########todo
+	treeStruct=""
+
+	def __init__(self,nodeName):		
+		self.nodeName[1]=nodeName
+	def addEdge(u,v,val):
+		tree[u].append((v,val))
+	def show(now):
+		if(now < 0): #####叶子
+			treeStruct+="\""+str(-now)+"\""
+			return
+		treeStruct+="\""+str(now)+"\""
+
+		treeStruct+=":{"
+		for item in tree[now]:
+			treeStruct+="\""+item[1]+"\""
+			show(int(item[0]))
+			if(item!=tree[now][-1]):
+				treeStruct+=","
+		treeStruct+="}"
 
 class IndexHandler(tornado.web.RequestHandler):
 	def get(self):
