@@ -1,4 +1,5 @@
 import os.path
+import re
 
 import tornado.httpserver
 import tornado.ioloop
@@ -10,6 +11,7 @@ define("port", default=8000, help="run on the given port", type=int)
 
 #正在展示的文件名全局变量
 fileShowed="-1"
+
 
 class IndexHandler(tornado.web.RequestHandler):
 	def get(self):
@@ -43,15 +45,29 @@ class buildTreeHandler(tornado.web.RequestHandler):
 		f=open(fileShowed,'r')
 		line=f.readline()
 		flag=0
+
+		treeRoot=-1
+		treeGraph={}
+
 		while line:
-			if(line.strip() == "<RELATION>"):
-				flag=1
 			if(line.strip() == "</RELATION>"):
 				break
+			
 			if(flag==1):
-				#todo----------------------------------
-			line = f.readline()
+				#relation标签内的一行，维护树结构
+				kv_List=line.split()
+				for item in kv_List:
+					if(item=="<R" or item=="/>"):
+						continue
+					key=re.findall(r"(.+?)=",item)[0]
+					val=re.findall("\""+"(.+?)"+"\"" ,item)[0]
 
+					#########todo
+			
+			if(line.strip() == "<RELATION>"):
+				flag=1
+			
+			line = f.readline()
 
 if __name__ == '__main__':
 	tornado.options.parse_command_line()
