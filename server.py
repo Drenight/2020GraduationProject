@@ -1,5 +1,8 @@
 import os.path
 import re
+import base64
+
+from graphviz import Digraph
 
 import tornado.httpserver
 import tornado.ioloop
@@ -46,6 +49,35 @@ class Tree:		#{[(,,),()],[]}
 		self.treeStruct+="}"
 		self.treeStruct+="}"		#}
 
+
+def plot_model(tree, name):
+    g = Digraph("G", filename=name, format='png', strict=False)
+    first_label = list(tree.keys())[0]
+    g.node("0", first_label)
+    _sub_plot(g, tree, "0")
+	#g.view()
+
+
+root = "0"
+
+
+def _sub_plot(g, tree, inc):
+    global root
+
+    first_label = list(tree.keys())[0]
+    ts = tree[first_label]
+    for i in ts.keys():
+        if isinstance(tree[first_label][i], dict):
+            root = str(int(root) + 1)
+            g.node(root, list(tree[first_label][i].keys())[0])
+            g.edge(inc, root, str(i))
+            _sub_plot(g, tree[first_label][i], root)
+        else:
+            root = str(int(root) + 1)
+            g.node(root, tree[first_label][i])
+            g.edge(inc, root, str(i))
+
+
 class IndexHandler(tornado.web.RequestHandler):
 	def get(self):
 		self.render('index.html')
@@ -80,12 +112,9 @@ class buildTreeHandler(tornado.web.RequestHandler):
 		flag=0
 
 		tree=Tree()
+		vec=[]		
 
 		while line:
-			if(line.strip() == "<RELATION>"):
-				flag=1
-				continue
-
 			if(line.strip() == "</RELATION>"):
 				flag=0
 				break
@@ -94,24 +123,70 @@ class buildTreeHandler(tornado.web.RequestHandler):
 				#relation标签内的一行，维护树结构
 				kv_List=line.split()
 
-				fa=-1
-				sons=[]
+				mp={}
 
 				for item in kv_List:
 					if(item=="<R" or item=="/>"):
 						continue
+					#print(item)
 					key=re.findall(r"(.+?)=",item)[0]
+					if(key=="ChildList"):
+						continue
 					val=re.findall("\""+"(.+?)"+"\"" ,item)[0]
-
-					if(key=="ID"):
-						lineID=int(val)
-					if(key=="ParagraphPosition"):
-						ss=val.split("|")
-						for sonsCover in ss:
-							if(sonsCover[0]==sonsCover[-1]):
-								sons.
+					mp[key]=val
+				
+				vec.append(mp)
 			
+			if(line.strip() == "<RELATION>"):
+				flag=1
+
 			line = f.readline()
+
+		#做个从值域到节点编号的映射，后面从父节点连接子节点的时候需要子节点编号
+		range2NodeID={}
+
+		mx=1
+
+		for mp in vec:
+			lb=mp["ParagraphPosition"][0]
+			rb=mp["ParagraphPosition"][-1]
+			mx=max(mx,int(rb))
+			range2NodeID[tuple((lb,rb))]=mp["ID"]
+		#	print(str(lb)+"___"+str(rb)+"___"+str(range2NodeID[tuple((lb,rb))]))
+
+		for i in range(1,mx+1):
+			range2NodeID[tuple((str(i),str(i)))]=str(-i)
+
+		for mp in vec:
+			ss=mp["ParagraphPosition"].split("|")
+			sonCnt=0;
+			for son in ss:
+				lb=son[0]
+				rb=son[-1]
+				sonCnt+=1
+				u=int(mp["ID"])
+				v=int(range2NodeID[tuple((lb,rb))])
+				if(mp["Center"]=="3"):
+					tree.addEdge(u,v,sonCnt,mp["RelationType"])		#trick
+				elif(mp["Center"]=="1" and sonCnt==1):
+					tree.addEdge(u,v,1,mp["RelationType"])
+				elif(mp["Center"]=="2" and sonCnt==2):
+					tree.addEdge(u,v,1,mp["RelationType"])
+				else:
+					tree.addEdge(u,v,0,mp["RelationType"])
+
+		tree.show(1)
+		
+		tmp={}	
+		tmp=eval(tree.treeStruct)
+
+		plot_model(tmp,"struct.gv")
+
+		with open("struct.gv.png","rb") as f:
+			b64=base64.b64encode(f.read())
+			s=b64.decode()
+		self.write(s)
+
 
 if __name__ == '__main__':
 	tornado.options.parse_command_line()

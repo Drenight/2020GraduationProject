@@ -21,7 +21,7 @@
 		<br>----------------------------------------------------------------------<br>
 	
 		<button id="buildTree">展示该语料篇章结构</button>
-
+		<img src="" id="b64"/>
 	</body>
 	
 	<!-----------------------------------script-------------------------------------->
@@ -60,8 +60,12 @@
 						$.get("/buildTree",function(data,status){
 						//返回数据data,返回状态status
 						if(status=="success"){
-							
+							document.getElementById('b64').src='data:image/png;base64,'+data;
 						}
+						else{
+							alert("Ajax 失败");
+						}			
+								
 				});
 		});
 
