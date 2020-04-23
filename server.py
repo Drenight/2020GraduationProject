@@ -15,26 +15,36 @@ fileShowed="-1"
 class Tree:		#{[(,,),()],[]}
 	root = 1
 	tree={}
-	nodeName={}		##########todo
+	nodeName={}		##########RelationType
 	treeStruct=""
 
-	def __init__(self,nodeName):		
-		self.nodeName[1]=nodeName
-	def addEdge(u,v,val):
-		tree[u].append((v,val))
-	def show(now):
-		if(now < 0): #####叶子
-			treeStruct+="\""+str(-now)+"\""
-			return
-		treeStruct+="\""+str(now)+"\""
+	def __init__(self):		
+		self.root=1
+		
+	def addEdge(self,u,v,val,uname):
+		if u in self.tree:
+			self.tree[u].append(tuple((v,val)))
+			self.nodeName[u]=str(uname)
+		else:
+			self.tree.setdefault(u,[])
+			self.tree[u].append(tuple((v,val)))
+			self.nodeName[u]=str(uname)
 
-		treeStruct+=":{"
-		for item in tree[now]:
-			treeStruct+="\""+item[1]+"\""
-			show(int(item[0]))
-			if(item!=tree[now][-1]):
-				treeStruct+=","
-		treeStruct+="}"
+	def show(self,now):
+		if(now < 0): #####叶子
+			self.treeStruct+="\""+str(-now)+"\""
+			return
+		self.treeStruct+="{"+"\""+str(self.nodeName[now])+"\""	#{
+
+		self.treeStruct+=":{"		
+		for item in self.tree[now]:
+			newName=item[1]
+			self.treeStruct+=str(newName)+":"
+			self.show(int(item[0]))
+			if(item!=self.tree[now][-1]):
+				self.treeStruct+=","
+		self.treeStruct+="}"
+		self.treeStruct+="}"		#}
 
 class IndexHandler(tornado.web.RequestHandler):
 	def get(self):
@@ -69,26 +79,37 @@ class buildTreeHandler(tornado.web.RequestHandler):
 		line=f.readline()
 		flag=0
 
-		treeRoot=-1
-		treeGraph={}
+		tree=Tree()
 
 		while line:
+			if(line.strip() == "<RELATION>"):
+				flag=1
+				continue
+
 			if(line.strip() == "</RELATION>"):
+				flag=0
 				break
 			
 			if(flag==1):
 				#relation标签内的一行，维护树结构
 				kv_List=line.split()
+
+				fa=-1
+				sons=[]
+
 				for item in kv_List:
 					if(item=="<R" or item=="/>"):
 						continue
 					key=re.findall(r"(.+?)=",item)[0]
 					val=re.findall("\""+"(.+?)"+"\"" ,item)[0]
 
-					#########todo
-			
-			if(line.strip() == "<RELATION>"):
-				flag=1
+					if(key=="ID"):
+						lineID=int(val)
+					if(key=="ParagraphPosition"):
+						ss=val.split("|")
+						for sonsCover in ss:
+							if(sonsCover[0]==sonsCover[-1]):
+								sons.
 			
 			line = f.readline()
 
