@@ -1,6 +1,7 @@
 import os.path
 import re
 import base64
+import time
 
 from graphviz import Digraph
 
@@ -66,10 +67,10 @@ def plot_model(tree, name):
 	_sub_plot(g, tree, "0")
 	g.view()
 
+root="0"
 
 def _sub_plot(g, tree, inc):
-    root=1
-
+    global root
     first_label = list(tree.keys())[0]
     ts = tree[first_label]
     for i in ts.keys():
@@ -110,7 +111,7 @@ class showFileHandler(tornado.web.RequestHandler):
 
 		f=open(dataPath,'r')
 		self.write(str(f.read()))
-		f.close()
+
 
 class buildTreeHandler(tornado.web.RequestHandler):
 	def get(self):
@@ -186,15 +187,15 @@ class buildTreeHandler(tornado.web.RequestHandler):
 					tree.addEdge(u,v,0,mp["RelationType"])
 
 		tree.show(1)
-		
+			
 		tmp={}	
 		tmp=eval(tree.treeStruct)
-		
-		del tree
 
-		#print(tmp)----------------------------------------bug
+
+#		del tree
+
+		print(tmp)#----------------------------------------bug
 		plot_model(tmp,"struct.gv")
-
 		with open("struct.gv.png","rb") as ff:
 			b64=base64.b64encode(ff.read())
 			s=b64.decode()
