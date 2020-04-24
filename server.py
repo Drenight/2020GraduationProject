@@ -23,7 +23,16 @@ class Tree:		#{[(,,),()],[]}
 
 	def __init__(self):		
 		self.root=1
-		
+		treeStruct=""
+		self.nodeName={}
+		self.tree={}
+
+	def __del__(self):
+		self.root=1
+		self.tree.clear()
+		self.nodeName.clear()
+		self.treeStruct=""
+
 	def addEdge(self,u,v,val,uname):
 		if u in self.tree:
 			self.tree[u].append(tuple((v,val)))
@@ -51,18 +60,15 @@ class Tree:		#{[(,,),()],[]}
 
 
 def plot_model(tree, name):
-    g = Digraph("G", filename=name, format='png', strict=False)
-    first_label = list(tree.keys())[0]
-    g.node("0", first_label)
-    _sub_plot(g, tree, "0")
-	#g.view()
-
-
-root = "0"
+	g = Digraph("G", filename=name, format='png', strict=False)
+	first_label = list(tree.keys())[0]
+	g.node("0", first_label)
+	_sub_plot(g, tree, "0")
+	g.view()
 
 
 def _sub_plot(g, tree, inc):
-    global root
+    root=1
 
     first_label = list(tree.keys())[0]
     ts = tree[first_label]
@@ -104,6 +110,7 @@ class showFileHandler(tornado.web.RequestHandler):
 
 		f=open(dataPath,'r')
 		self.write(str(f.read()))
+		f.close()
 
 class buildTreeHandler(tornado.web.RequestHandler):
 	def get(self):
@@ -146,6 +153,8 @@ class buildTreeHandler(tornado.web.RequestHandler):
 		range2NodeID={}
 
 		mx=1
+		
+		#print(vec) 
 
 		for mp in vec:
 			lb=mp["ParagraphPosition"][0]
@@ -161,6 +170,7 @@ class buildTreeHandler(tornado.web.RequestHandler):
 			ss=mp["ParagraphPosition"].split("|")
 			sonCnt=0;
 			for son in ss:
+				#print(son)
 				lb=son[0]
 				rb=son[-1]
 				sonCnt+=1
@@ -179,14 +189,19 @@ class buildTreeHandler(tornado.web.RequestHandler):
 		
 		tmp={}	
 		tmp=eval(tree.treeStruct)
+		
+		del tree
 
+		#print(tmp)----------------------------------------bug
 		plot_model(tmp,"struct.gv")
 
-		with open("struct.gv.png","rb") as f:
-			b64=base64.b64encode(f.read())
+		with open("struct.gv.png","rb") as ff:
+			b64=base64.b64encode(ff.read())
 			s=b64.decode()
 		self.write(s)
-
+		ff.close()
+		f.close()
+		
 
 if __name__ == '__main__':
 	tornado.options.parse_command_line()

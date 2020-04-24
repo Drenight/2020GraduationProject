@@ -6,7 +6,13 @@ class Tree:		#{[(,,),()],[]}
 
 	def __init__(self):		
 		self.root=1
-		
+
+	def __del__(self):
+		root=1
+		self.tree.clear()
+		self.nodeName.clear()
+		treeStruct=""
+
 	def addEdge(self,u,v,val,uname):
 		if u in self.tree:
 			self.tree[u].append(tuple((v,val)))
@@ -42,8 +48,26 @@ tr.addEdge(3,-3,0,"pine")
 tr.show(1)
 print(tr.treeStruct)
 
+del tr
+
+ax=Tree()
+ax.addEdge(1,-1,1,"apple")
+ax.addEdge(1,3,0,"apple")
+ax.addEdge(3,-2,1,"pine")
+ax.addEdge(3,-3,0,"pine")
+ax.show(1)
+print(ax.treeStruct)
 #		1
 #		/ \
 #	  -1  3
 #		   /\
 #	     -2 -3
+
+class px:
+	axx={}
+	
+dd=px()
+dd.axx[3]=2
+
+pp=px()
+print(pp.axx)
