@@ -1,3 +1,10 @@
+failed to execute ['dot', '-Tpng', '-O', 'struct.gv'], make sure the Graphviz executables are on your systems' PATH
+UnicodeDecodeError: 'ascii' codec can't decode byte 0xe8
+
+HTTP304
+200 GET /buildTree (127.0.0.1) 55.21ms
+304 GET /buildTree (112.20.40.109) 1.69ms
+
 ### 结构
 raw:生语料
 pre:预处理后文件

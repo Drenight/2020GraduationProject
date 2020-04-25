@@ -1,7 +1,8 @@
+#encodeing: utf-8
+import sys
 import os.path
 import re
 import base64
-import time
 
 from graphviz import Digraph
 
@@ -14,6 +15,10 @@ from tornado.options import define, options
 define("port", default=8000, help="run on the given port", type=int)
 
 #正在展示的文件名全局变量
+
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
 fileShowed="-1"
 
 class Tree:		#{[(,,),()],[]}
@@ -65,7 +70,8 @@ def plot_model(tree, name):
 	first_label = list(tree.keys())[0]
 	g.node("0", first_label)
 	_sub_plot(g, tree, "0")
-	g.view()
+	g.render(filename=name,directory=None,view=False,cleanup=False)
+#	g.view()
 
 root="0"
 
@@ -194,7 +200,7 @@ class buildTreeHandler(tornado.web.RequestHandler):
 
 #		del tree
 
-		print(tmp)#----------------------------------------bug
+#print(tmp)#----------------------------------------bug
 		plot_model(tmp,"struct.gv")
 		with open("struct.gv.png","rb") as ff:
 			b64=base64.b64encode(ff.read())
