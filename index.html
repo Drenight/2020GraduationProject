@@ -2,10 +2,10 @@
 <html>
     <head>
 		<title>在线语料标注</title>
-		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script> 
+		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 	</head>
     <body>
-		
+
 		<p id=cnt></p>
 		<button id="preFileCount">查看预处理文件数量</button>
 		<button id="tagFileCount">查看已标注文件数量</button>
@@ -22,11 +22,132 @@
 	
 		<button id="buildTree">展示该语料篇章结构</button>
 		<img src="" id="b64"/>
+		<br>----------------------------------------------------------------------<br>
+		
+
+		<input type="text" name="nodeCnt" id="nodeCnt">段落数<br>
+		<button id="nodeCreate">生成叶子节点</button>
+		<button id="reset">重置</button>
+		<select id="rela">
+			<option value=1>解说关系</option>	
+			<option value=2>并列关系</option>
+			<option value=3>评价关系</option>
+			<option value=4>目的行为关系</option>
+			<option value=5>行为目的关系</option>
+			<option value=6>因果关系</option>			
+			<option value=7>果因关系</option>			
+			<option value=8>陈述举例关系</option>			
+			<option value=9>举例陈述关系</option>			
+			<option value=10>背景关系</option>
+			<option value=11>顺承关系</option>			
+			<option value=12>递进关系</option>			
+			<option value=13>对比关系</option>			
+			<option value=14>总结关系</option>			
+			<option value=15>补充关系</option>
+		</select>
+		<button id="connect">连接</button>
+		<br>
 	</body>
 	
 	<!-----------------------------------script-------------------------------------->
 	
 	<script>
+		var parCnt=0;		//段落数，取负为id
+		var nodeCnt=0;		//非段落节点数
+		var nodeLocking=[];
+
+
+		$("#connect").click(function(){
+			var minX=document.getElementById(window.nodeLocking[0]).offsetTop;
+			var maxX=document.getElementById(window.nodeLocking[0]).offsetTop;
+			var maxY=document.getElementById(window.nodeLocking[0]).offsetLeft;
+
+			console.log(minX);	
+
+			for(var i=0;i<window.nodeLocking.length;i++){
+				minX=Math.min(minX,document.getElementById(window.nodeLocking[i]).offsetTop);
+				maxX=Math.max(maxX,document.getElementById(window.nodeLocking[i]).offsetTop);
+				maxY=Math.max(maxY,document.getElementById(window.nodeLocking[i]).offsetLeft);
+			}	
+
+			var o=document.createElement("input");
+			o.type="button";
+			nodeCnt++;
+			o.id="node"+nodeCnt;
+			o.value=$("#rela option:selected").text();
+			o.addEventListener("click",choose);
+			o.style.borderColor='#000';
+
+			document.body.appendChild(o);
+			o.style.position="absolute";
+			o.style.left=(maxY+100)+"px";
+			o.style.top=((minX+maxX)/2)+"px";
+
+
+			o=null;
+
+		});
+
+		$("#nodeCreate").click(function(){
+			var bs=document.getElementById("nodeCnt").value;
+			//console.log(bs);
+			window.parCnt=Number(bs);
+			console.log(window.parCnt);
+			for(var i=1;i<=Number(bs);i++){
+				var o=document.createElement("input");
+				o.type="button";
+				o.id="par"+i;
+				o.value="段落"+i;
+				o.addEventListener("click",choose);
+				o.style.borderColor='#000';
+				document.body.appendChild(o);
+				o=null;
+				for(var j=1;j<=3;j++){		//添加间隔
+					var br=document.createElement('br');
+					br.id="br"+i+j;
+					document.body.appendChild(br);
+				}
+			}
+		});
+		
+		$("#reset").click(function(){
+			for(var i=1;i<=window.parCnt;i++){
+				var tmp=document.getElementById("par"+i);
+				tmp.remove();
+			}
+			for(var i=1;i<=window.parCnt;i++){
+				for(var j=1;j<=3;j++){	
+					var tmp=document.getElementById("br"+i+j);
+					tmp.remove();
+				}
+			}
+
+			for(var i=1;i<=window.nodeCnt;i++){
+				var tmp=document.getElementById("node"+i);
+				tmp.remove();
+			}
+			window.parCnt=0;
+			window.nodeCnt=0;
+			window.nodeLocking.splice(0);
+		});
+	
+		function choose(){			//ok!
+			if(this.style.borderColor=="red"){
+				this.style.borderColor="#000";
+				for(var i=0;i<window.nodeLocking.length;i++){
+					if(window.nodeLocking[i]==this.id){
+						window.nodeLocking.splice(i,1);
+					}
+				}
+			}else{
+				this.style.borderColor="red";
+				window.nodeLocking.push(this.id);
+				console.log(this.id);
+			}
+			console.log(window.nodeLocking);
+		}
+
+
 		$("#preFileCount").click(function(){
 				$.get("/preFileCount",function(data,status){
 						//返回数据data,返回状态status

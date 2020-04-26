@@ -1,4 +1,4 @@
-#encodeing: utf-8
+#encoding: utf-8
 import sys
 import os.path
 import re
@@ -16,8 +16,8 @@ define("port", default=8000, help="run on the given port", type=int)
 
 #正在展示的文件名全局变量
 
-reload(sys)
-sys.setdefaultencoding("utf-8")
+#reload(sys)
+#sys.setdefaultencoding("utf-8")
 
 fileShowed="-1"
 
@@ -193,7 +193,7 @@ class buildTreeHandler(tornado.web.RequestHandler):
 					tree.addEdge(u,v,0,mp["RelationType"])
 
 		tree.show(1)
-			
+		print(tree.treeStruct)
 		tmp={}	
 		tmp=eval(tree.treeStruct)
 
