@@ -48,29 +48,25 @@
 		</select>
 		<button id="connect">连接</button>
 		<br>
-		<div id="pad">
-			<!--div style="z-index:-1" id="padd"-->
-			<!--/div-->
-		</div>
+		<div id="pad"></div>
 		<br>
 	</body>
 	
-
 	<!-----------------------------------script-------------------------------------->
+	
 	
 
 	<script>
 		var parCnt=0;		//段落数，取负为id
 		var nodeCnt=0;		//非段落节点数
 		var nodeLocking=[];
+
 	
-		var svgContainer=d3.select("#pad").append("svg")	//body
+		var svgContainer=d3.select("dsaiuoeqw").append("svg")	//body
 			.attr("position","absolute")
-			.attr("left",0)
-			.attr("top",0)
-			.attr("width",5000)
-			.attr("height",5000)
-			.attr("z-index",-1)
+			.attr("width",1000)
+			.attr("height",1000)
+			.attr("position","relative")
 			;
 	
 		$("#connect").click(function(){
@@ -78,7 +74,7 @@
 			var maxX=document.getElementById(window.nodeLocking[0]).offsetTop;
 			var maxY=document.getElementById(window.nodeLocking[0]).offsetLeft;
 
-			//console.log(minX);	
+			console.log(minX);	
 
 			for(var i=0;i<window.nodeLocking.length;i++){
 				minX=Math.min(minX,document.getElementById(window.nodeLocking[i]).offsetTop);
@@ -99,25 +95,20 @@
 
 			o.style.position="absolute";
 			ool=maxY+100;
-			oot=(minX+maxX)/2;
+			oot=(minX+maxX)/2
 			o.style.left=(maxY+100)+"px";
 			o.style.top=((minX+maxX)/2)+"px";
+			
+			svgContainer.append("line")
+				.attr("x1",20)
+				.attr("y1",20)
+				.attr("x2",300)
+				.attr("y2",300)
+				.attr("stroke","black")
+				.attr("stroke-width","2px");
+			
+			//var d=line([window.nodeLocking[0].offsetTop,window.nodeLocking[0].offsetLeft],[ool,oot]);
 
-			console.log(ool);
-			console.log(oot);
-
-			for(var i=0;i<window.nodeLocking.length;i++){
-				var biasTop=document.getElementById("nodeCreate").offsetTop+20;
-				svgContainer.append("line")
-					.attr("position","absolute")
-					.attr("z-index",-1)
-					.attr("x1",ool)
-					.attr("y1",oot-biasTop)
-					.attr("x2",document.getElementById(window.nodeLocking[i]).offsetLeft)
-					.attr("y2",document.getElementById(window.nodeLocking[i]).offsetTop-biasTop)
-					.attr("stroke","black")
-					.attr("stroke-width","2px");
-			}
 			o=null;
 
 		});
@@ -125,9 +116,7 @@
 			var bs=document.getElementById("nodeCnt").value;
 			//console.log(bs);
 			window.parCnt=Number(bs);
-
-			var nx=document.getElementById("nodeCreate").offsetTop;
-
+			console.log(window.parCnt);
 			for(var i=1;i<=Number(bs);i++){
 				var o=document.createElement("input");
 				o.type="button";
@@ -135,12 +124,14 @@
 				o.value="段落"+i;
 				o.addEventListener("click",choose);
 				o.style.borderColor='#000';
-				o.style.position="absolute";
-				o.style.left=0;
-				o.style.top=(nx + 100*(i))+"px";
 				document.getElementById("pad").appendChild(o);
-
+				//svgContainer.appendChild(o);
 				o=null;
+				for(var j=1;j<=3;j++){		//添加间隔
+					var br=document.createElement('br');
+					br.id="br"+i+j;
+					document.getElementById("pad").appendChild(br);
+				}
 			}
 		});
 		
@@ -148,6 +139,12 @@
 			for(var i=1;i<=window.parCnt;i++){
 				var tmp=document.getElementById("par"+i);
 				tmp.remove();
+			}
+			for(var i=1;i<=window.parCnt;i++){
+				for(var j=1;j<=3;j++){	
+					var tmp=document.getElementById("br"+i+j);
+					tmp.remove();
+				}
 			}
 
 			for(var i=1;i<=window.nodeCnt;i++){
