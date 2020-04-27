@@ -8,7 +8,9 @@
     <body>
 
 		<p id=cnt></p>
-		<button id="tagFileCount">查看已标注文件数量</button>
+		<button id="dataFileCount">查看已标注文件数量</button>
+		<button id="tagFileCount">查看标注篇章结构树数量</button>
+
 		<br>----------------------------------------------------------------------<br>
 		<input type="text" name="fileName" id="fileName">想查看的文件名字<br>
 		/data:已标注文件<br>
@@ -21,7 +23,7 @@
 		<xmp id=fileText></xmp>
 		<br>----------------------------------------------------------------------<br>
 	
-		<button id="buildTree">展示该语料篇章结构</button>
+		<button id="buildTree">展示该语料篇章结构树</button>
 		<img src="" id="b64"/>
 		<br>----------------------------------------------------------------------<br>
 		控制台有本次标注结果可供参考<br>
@@ -37,7 +39,7 @@
 			<option value=1>1</option>
 			<option value=2>2</option>
 			<option value=3>3</option>
-		</select>关系重心(第几个被选中,3为全选,相邻段落请先选小的，用这个调节)
+		</select>关系重心(第几个被选中,3为全选,相邻段落请先选小的，用这个调节关系重心)
 		<br>
 
 
@@ -327,11 +329,18 @@
 				$.get("/tagFileCount",function(data,status){
 						//返回数据data,返回状态status
 						if(status=="success"){
+							document.getElementById('cnt').innerHTML="篇章结构树"+data;
+						}
+				});
+		});
+		$("#dataFileCount").click(function(){
+				$.get("/dataFileCount",function(data,status){
+						//返回数据data,返回状态status
+						if(status=="success"){
 							document.getElementById('cnt').innerHTML="已标注"+data;
 						}
 				});
 		});
-
 		$("#showFile").click(function(){
 				var fileName=$("#fileName").val();
 				$.get("/showFile",{message:fileName},function(data,status){

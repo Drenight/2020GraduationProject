@@ -103,6 +103,11 @@ class preFileCountHandler(tornado.web.RequestHandler):
 
 class tagFileCountHandler(tornado.web.RequestHandler):
 	def get(self):
+		dataPath=os.getcwd()+"/tag"
+		dataFileCnt=os.listdir(dataPath)
+		self.write(str(dataFileCnt))
+class dataFileCountHandler(tornado.web.RequestHandler):
+	def get(self):
 		dataPath=os.getcwd()+"/data"
 		dataFileCnt=os.listdir(dataPath)
 		self.write(str(dataFileCnt))
@@ -264,7 +269,7 @@ if __name__ == '__main__':
 	app = tornado.web.Application(
 		handlers=[
 		(r'/', IndexHandler), 
-		(r'/preFileCount',preFileCountHandler),
+		(r'/dataFileCount',dataFileCountHandler),
 		(r'/tagFileCount',tagFileCountHandler),
 		(r'/showFile',showFileHandler),
 		(r'/buildTree',buildTreeHandler),
