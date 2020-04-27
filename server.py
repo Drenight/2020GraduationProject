@@ -117,6 +117,53 @@ class showFileHandler(tornado.web.RequestHandler):
 
 		f=open(dataPath,'r')
 		self.write(str(f.read()))
+		f.close()
+
+class tagSaveHandler(tornado.web.RequestHandler):
+	def post(self):
+
+		dataPath=str(os.getcwd())
+		dataPath+=str(self.get_argument("fileName"))
+		f=open(dataPath,'w')
+		s=self.get_argument("ans")
+		ans="<RELATION>\n"
+#		print(s)
+		line_List=s.split("#")
+
+		nodeCnt=self.get_argument("nodeCnt")
+
+		for line in line_List:
+			line=line[1:-1]
+			ans+="    <R "
+
+			kv_List=line.split(",")
+			for item in kv_List:
+				print(item)
+				key=re.findall(r"\"" + "(.+?)" + "\"",item)[0]
+				val=re.findall(r"\""+"(.+?)"+"\"",item)[1]
+				
+				if(key=="_Function"):
+					key="Function"
+
+				if(key=="ID"):
+					if(int(val)==-1):
+						val=str(-1)
+					else:
+						val=str(int(nodeCnt)-int(val)+1)
+				if(key=="ParentId"):
+					val=str(int(nodeCnt)-int(val)+1)
+				
+				if(val=="null"):
+					val=""
+						
+				ans+=str(key)+"=\""+str(val)+"\" "
+			
+			ans+="/>"	
+			ans+="\n"
+		ans+="</RELATION>"
+
+		f.write(ans)
+		f.close()
 
 
 class buildTreeHandler(tornado.web.RequestHandler):
@@ -164,6 +211,7 @@ class buildTreeHandler(tornado.web.RequestHandler):
 		#print(vec) 
 
 		for mp in vec:
+			print(mp)
 			lb=mp["ParagraphPosition"][0]
 			rb=mp["ParagraphPosition"][-1]
 			mx=max(mx,int(rb))
@@ -210,6 +258,7 @@ class buildTreeHandler(tornado.web.RequestHandler):
 		f.close()
 		
 
+
 if __name__ == '__main__':
 	tornado.options.parse_command_line()
 	app = tornado.web.Application(
@@ -219,6 +268,7 @@ if __name__ == '__main__':
 		(r'/tagFileCount',tagFileCountHandler),
 		(r'/showFile',showFileHandler),
 		(r'/buildTree',buildTreeHandler),
+		(r'/tagSave',tagSaveHandler),
 		]
 	)
 	http_server = tornado.httpserver.HTTPServer(app)

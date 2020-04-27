@@ -1,0 +1,4 @@
+<RELATION>
+    <R Center="3" ChildList="3|4" Function="5" ID="2" Layer="2" ParagraphPosition="3...3|4...4" ParentId="1" RelationNumber="单个关系" RelationType="并列关系" RelationWeight="0" StructType="并列切分" />
+    <R Center="3" ChildList="1|2|5" Function="5" ID="1" Layer="3" ParagraphPosition="1...1|2...2|3...4|5...5" ParentId="4" RelationNumber="单个关系" RelationType="并列关系" RelationWeight="0" StructType="并列切分" />
+</RELATION>
