@@ -46,7 +46,7 @@
 				</div>
 				<div id='buttons'>
 					<br>
-					<input type="text" name="fileName" id="fileName" class="form-control" placeholder="想查看的文件名字 ">
+					<input type="text" name="fileName" id="fileName" class="form-control" placeholder="想查看/修改的文件名字 ">
 					<br>
 					<button id="showFile" class="btn btn-primary">查看文件</button>
 					<button id="buildTree" class="btn btn-primary">展示该语料篇章结构树</button>
@@ -55,19 +55,9 @@
 					<!--<xmp><p id=fileText></p></xmp>-->
 					<xmp id=fileText></xmp>
 					
-				
-					
-					<br>
-					
 					<img src="" id="b64"/>
 					
-					
-					<br>
-					
-					<input type="text" name="tagSave" id="tagSave" class="form-control" placeholder="标注的文件名">
-					<br>
-					<button id="saveFile" class="btn btn-primary">提交修改</button>
-					<br>
+
 					<br>
 					<input type="text" name="nodeCnt" id="nodeCnt" class="form-control" placeholder="段落数 "><br>
 					<input type="text" name="func" id="func" class="form-control" placeholder="function "><br>
@@ -76,7 +66,7 @@
 						<option value=1>1</option>
 						<option value=2>2</option>
 						<option value=3>3</option>
-					</select>关系重心(第几个被选中为重心,3为全选,相邻段落请先选小的，用这个调节关系重心)
+					</select>关系重心(第几个被选中为重心,3为全选,如含有[段落节点]请先选较小的节点,用这个调节关系重心)
 					<br>
 
 					<select id="rela" onchange="autoLock()" class="form-control">
@@ -107,6 +97,7 @@
 							重置
 						</span>
 					</button>
+					<button id="saveFile" class="btn btn-primary">提交</button>
 					
 					<br>
 				</div>
@@ -197,8 +188,23 @@
 			o.style.position="absolute";
 			ool=maxY+200;
 			oot=(minX+maxX)/2;
-			o.style.left=(maxY+200)+"px";
-			o.style.top=((minX+maxX)/2)+"px";
+				
+			flag=1;
+			while(flag){
+				flag=0;
+				for(var i=1;i<nodeCnt;i++){
+					var tmp=document.getElementById("nod"+i);
+
+					if(tmp.offsetLeft==ool && tmp.offsetTop==oot){
+						flag=1;
+						ool+=200;
+						break;
+					}
+				}
+			}
+			o.style.left=ool+"px";
+			o.style.top=oot+"px";
+
 			//console.log(o.offsetWidth)
 			//画线
 			for(var i=0;i<window.nodeLocking.length;i++){
@@ -365,7 +371,7 @@
 				document.getElementById(window.nodeLocking[i]).style.borderColor="#000";
 			}	
 			window.nodeLocking.splice(0);
-			o=null;
+			//o=null;
 		});
 
 		$("#nodeCreate").click(function(){
@@ -487,7 +493,7 @@
 		});
 
 		$("#saveFile").click(function(){
-				var fileName=$("#tagSave").val();
+				var fileName=$("#fileName").val();
 				var ans="";
 				mxLayer=window.stk[0].Layer
 				for(var i=0;i<window.stk.length;i++){
@@ -514,7 +520,8 @@
 
 
 		$("#buildTree").click(function(){
-						$.get("/buildTree",function(data,status){
+						var fileName=$('#fileName').val();
+						$.get("/buildTree",{message:fileName},function(data,status){
 						//返回数据data,返回状态status
 						if(status=="success"){
 							document.getElementById('b64').src='data:image/png;base64,'+data;

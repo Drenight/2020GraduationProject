@@ -19,8 +19,6 @@ define("port", default=8000, help="run on the given port", type=int)
 #reload(sys)
 #sys.setdefaultencoding("utf-8")
 
-fileShowed="-1"
-
 
 class Tree:		#{[(,,),()],[]}
 	root = 1
@@ -119,9 +117,6 @@ class showFileHandler(tornado.web.RequestHandler):
 		dataPath=str(os.getcwd())+'/data/'
 		dataPath+=str(self.get_argument("message"))
 
-		global fileShowed
-		fileShowed=dataPath
-
 		f=open(dataPath,'r')
 		self.write(str(f.read()))
 		f.close()
@@ -192,7 +187,10 @@ class tagSaveHandler(tornado.web.RequestHandler):
 
 class buildTreeHandler(tornado.web.RequestHandler):
 	def get(self):
-		f=open(fileShowed,'r')
+		dataPath=str(os.getcwd())+'/data/'
+		dataPath+=str(self.get_argument("message"))
+		
+		f=open(dataPath,'r')
 		line=f.readline()
 		flag=0
 
