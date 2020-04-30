@@ -3,6 +3,9 @@ import sys
 import os.path
 import re
 import base64
+import xml.dom.minidom
+
+from io import StringIO
 
 from graphviz import Digraph
 
@@ -111,6 +114,7 @@ class dataFileCountHandler(tornado.web.RequestHandler):
 	def get(self):
 		dataPath=os.getcwd()+"/data"
 		dataFileCnt=os.listdir(dataPath)
+		dataFileCnt.sort()
 		self.write(str(dataFileCnt))
 
 class showFileHandler(tornado.web.RequestHandler):
@@ -130,12 +134,35 @@ class tagSaveHandler(tornado.web.RequestHandler):
 
 		dataPath=str(os.getcwd())
 		dataPath+=str(self.get_argument("fileName"))
-		f=open(dataPath,'w')
+		f=open(dataPath,'r')
+		r=f.read()
+		f.close()
+		text = str(r.encode('utf-8'),encoding='utf-8')
+
+		DOMTree=xml.dom.minidom.parseString(text)
+		print(DOMTree.getElementsByTagName('LEAD')[0].childNodes[0].data)	
+		
+		DOMTree.getElementsByTagName('LEAD')[0].childNodes[0].data='sx'
+		
+		print(DOMTree.getElementsByTagName('LEAD')[0].childNodes[0].data)		
+		
+		tmp = DOMTree.getElementsByTagName('RELATION')
+		tmp[0].removeChild(tmp[0].childNodes[0])
+
+		print("111")
+
+		with open(dataPath,'w',encoding='UTF-8') as fh:
+			#DOMTree.writexml(fh,indent='',addindent='',newl='',encoding='UTF-8')
+			DOMTree.writexml(fh)
+		return
+
 		s=self.get_argument("ans")
-		ans="<RELATION>\n"
+		ans=""
+#		ans="<RELATION>\n"
 #		print(s)
 		line_List=s.split("#")
 
+		
 		nodeCnt=self.get_argument("nodeCnt")
 
 		for line in line_List:
@@ -166,10 +193,9 @@ class tagSaveHandler(tornado.web.RequestHandler):
 			
 			ans+="/>"	
 			ans+="\n"
-		ans+="</RELATION>"
-
-		f.write(ans)
-		f.close()
+#		ans+="</RELATION>"
+#		f.write(ans)
+#		f.close()
 
 
 class buildTreeHandler(tornado.web.RequestHandler):

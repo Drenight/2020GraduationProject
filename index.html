@@ -30,19 +30,19 @@
 	</head>
     <body>
 		<div class='box'>
-			<div class='leftbox' style="height:5000px;width:200px;float:left;">
+			<div class='leftbox' style="height:5000px;width:300px;float:left;">
 			
 			<div id='jstree'>
 			</div>
 			
-			<button id='buttonXD'>演示按钮</button>
+			<!--button id='buttonXD'>演示按钮</button>-->
 
 			</div>
 			<div class='rightbox' style="height:5000px;width:500px;float:left;">
 				<div class='fileTree'>
-					<p id=cnt></p>	
+
 					<button id="dataFileCount" class="btn btn-primary">查看已标注文件数量</button>
-					<button id="tagFileCount" class="btn btn-primary">查看标注篇章结构树数量</button>	
+					<!--<button id="tagFileCount" class="btn btn-primary">查看标注篇章结构树数量</button>	-->
 				</div>
 				<div id='buttons'>
 					<br>
@@ -67,7 +67,7 @@
 					<br>
 					
 					<input type="text" name="tagSave" id="tagSave" class="form-control" placeholder="标注结果提交路径 ">
-					例：/tag/chtb_0001_1627407027.xml<br>
+					例：/data/chtb_0001.xml<br>
 					<button id="saveFile" class="btn btn-primary">提交文件</button>
 					<br>
 					<br>
@@ -143,6 +143,7 @@
 
 		//Center,ChildList,_Function,ID,Layer,ParagraphPosition,ParentId,RelationNumber,RelationType,RelationWeight,StructType)		关系节点
 
+		/*
 		  $(function () {
 		    // 6 当DOM准备好时创建一个实例
 		    $('#jstree').jstree({ 'core' : {
@@ -170,6 +171,8 @@
 		      $('#jstree').jstree(true).select_node('child_node_1');
 		    });
 		  });
+
+			*/
 
 		$("#connect").click(function(){
 			var minX=document.getElementById(window.nodeLocking[0]).offsetTop;
@@ -230,6 +233,7 @@
 						.attr("stroke-width","2px");
 					}
 			}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 			
 			var json={
@@ -355,8 +359,10 @@
 
 			window.stk.push(json);
 			console.log(json);
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 			//清除选中状态
+
 			for(var i=0;i<window.nodeLocking.length;i++){
 				document.getElementById(window.nodeLocking[i]).style.borderColor="#000";
 			}	
@@ -431,46 +437,42 @@
 			//console.log(window.nodeLocking);
 		};
 
-		$("#tagFileCount").click(function(){
-				$.get("/tagFileCount",function(data,status){
-						//返回数据data,返回状态status
-						if(status=="success"){
-							data="['chtb_0010.xml', 'chtb_0007.xml', 'chtb_0004.xml', 'chtb_0001.xml', 'chtb_0009.xml', 'chtb_0008.xml', 'chtb_0006.xml', 'chtb_0002.xml', 'chtb_0005.xml', 'chtb_0003.xml']"
-							document.getElementById('cnt').innerHTML=data;
-							
-							$('#jstree').jstree({
-								'data':[
-								       '简单的根节点',
-								       {
-								         'text' : '根节点 2',
-								         'state' : {
-								           'opened' : true,
-								           'selected' : true
-								         },
-								         'children' : [
-								           { 'text' : '子 1' },
-								           '子 2'
-								         ]
-								      }
-								    ]
-								/*[
-									{
-									'text':'root',
-									'state':{
-										'open':'true',
-											},
-									'children':data,
-									}
-								]*/								
-							});
-						}
-				});
-		});
+		//$("#tagFileCount").click(function(){
+		//		$.get("/tagFileCount",function(data,status){
+		//				//返回数据data,返回状态status
+		//				if(status=="success"){
+		//
+		//					document.getElementById('cnt').innerHTML=data;	
+		//
+		//				}
+		//		});
+		//});
+
 		$("#dataFileCount").click(function(){
 				$.get("/dataFileCount",function(data,status){
 						//返回数据data,返回状态status
 						if(status=="success"){
-							document.getElementById('cnt').innerHTML=data;
+							//document.getElementById('cnt').innerHTML=data;
+
+							var tmp=data.slice(1,-1);
+							var tmp2=tmp.split('\'');
+							var tmp3=tmp2.join('');
+							var tmp4=tmp3.split(',');
+
+							$('#jstree').jstree({ 'core' : {
+								'data' : [
+							   	//'简单的根节点',
+							   	{
+								 'text' : 'data',
+								 'state' : {
+								   'opened' : true,
+								   'selected' : true
+								 },
+								 'children' : tmp4
+								 
+							  }
+							]
+						} });
 						}
 				});
 		});
