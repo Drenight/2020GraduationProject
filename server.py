@@ -3,9 +3,6 @@ import sys
 import os.path
 import re
 import base64
-import xml.dom.minidom
-
-from io import StringIO
 
 from graphviz import Digraph
 
@@ -119,7 +116,7 @@ class dataFileCountHandler(tornado.web.RequestHandler):
 
 class showFileHandler(tornado.web.RequestHandler):
 	def get(self):
-		dataPath=str(os.getcwd())
+		dataPath=str(os.getcwd())+'/data/'
 		dataPath+=str(self.get_argument("message"))
 
 		global fileShowed
@@ -134,27 +131,6 @@ class tagSaveHandler(tornado.web.RequestHandler):
 
 		dataPath=str(os.getcwd())
 		dataPath+=str(self.get_argument("fileName"))
-		f=open(dataPath,'r')
-		r=f.read()
-		f.close()
-		text = str(r.encode('utf-8'),encoding='utf-8')
-
-		DOMTree=xml.dom.minidom.parseString(text)
-		print(DOMTree.getElementsByTagName('LEAD')[0].childNodes[0].data)	
-		
-		DOMTree.getElementsByTagName('LEAD')[0].childNodes[0].data='sx'
-		
-		print(DOMTree.getElementsByTagName('LEAD')[0].childNodes[0].data)		
-		
-		tmp = DOMTree.getElementsByTagName('RELATION')
-		tmp[0].removeChild(tmp[0].childNodes[0])
-
-		print("111")
-
-		with open(dataPath,'w',encoding='UTF-8') as fh:
-			#DOMTree.writexml(fh,indent='',addindent='',newl='',encoding='UTF-8')
-			DOMTree.writexml(fh)
-		return
 
 		s=self.get_argument("ans")
 		ans=""
@@ -171,7 +147,7 @@ class tagSaveHandler(tornado.web.RequestHandler):
 
 			kv_List=line.split(",")
 			for item in kv_List:
-				print(item)
+#				print(item)
 				key=re.findall(r"\"" + "(.+?)" + "\"",item)[0]
 				val=re.findall(r"\""+"(.+?)"+"\"",item)[1]
 				
@@ -194,6 +170,22 @@ class tagSaveHandler(tornado.web.RequestHandler):
 			ans+="/>"	
 			ans+="\n"
 #		ans+="</RELATION>"
+
+		with open(dataPath,'r',encoding='utf-8') as f1,open("%s.bak"%dataPath,'w',encoding='utf-8')as f2:
+			flag=0
+			for line in f1:
+				if(line.strip()=='</RELATION>'):
+					flag=0
+				if(flag):
+					continue
+				if(0==flag):
+					f2.write(line)
+				if(line.strip()=='<RELATION>'):
+					flag=1
+					f2.write(ans)
+
+			os.remove(dataPath)
+			os.rename("%s.bak"%dataPath,dataPath)
 #		f.write(ans)
 #		f.close()
 
@@ -243,7 +235,7 @@ class buildTreeHandler(tornado.web.RequestHandler):
 		#print(vec) 
 
 		for mp in vec:
-			print(mp)
+#print(mp)
 			lb=mp["ParagraphPosition"][0]
 			rb=mp["ParagraphPosition"][-1]
 			mx=max(mx,int(rb))
@@ -273,7 +265,7 @@ class buildTreeHandler(tornado.web.RequestHandler):
 					tree.addEdge(u,v,0,mp["RelationType"])
 
 		tree.show(1)
-		print(tree.treeStruct)
+#		print(tree.treeStruct)
 		tmp={}	
 		tmp=eval(tree.treeStruct)
 
@@ -281,6 +273,9 @@ class buildTreeHandler(tornado.web.RequestHandler):
 #		del tree
 
 #print(tmp)#----------------------------------------bug
+		ans="<RELATION>\n"
+		ans="<RELATION>\n"
+		ans="<RELATION>\n"
 		plot_model(tmp,"struct.gv")
 		with open("struct.gv.png","rb") as ff:
 			b64=base64.b64encode(ff.read())

@@ -4,9 +4,8 @@
     <ABSTRACT>浦东颁布实行了涉及经济、建筑等多个领域的法规文件，规范了浦东的开发，受到了国内外投资者的好评。</ABSTRACT>
   </DISCOURSE>
   <RELATION>
-    <R Center="1" ChildList="1|2" Function="4" ID="3" Layer="2" ParagraphPosition="1...1|2...2" ParentId="1" RelationNumber="单个关系" RelationType="解说关系" RelationWeight="0" StructType="逐层切分" />
-    <R Center="2" ChildList="3|4" Function="4" ID="2" Layer="2" ParagraphPosition="3...3|4...4" ParentId="1" RelationNumber="单个关系" RelationType="解说关系" RelationWeight="0" StructType="逐层切分" />
-    <R Center="3" ChildList="" Function="4" ID="1" Layer="3" ParagraphPosition="1...2|3...4" ParentId="5" RelationNumber="单个关系" RelationType="并列关系" RelationWeight="0" StructType="并列切分" />
+<p xml soo />
+<p xml soo2 />
   </RELATION>
   <TEXT>
     <P Function="Summary-Lead" ID="1" ParagraphTopic="上海浦东颁布实行涉及多个领域的法规性文件，确保了浦东开发的有序进行。" ParagraphWeight="0">上海浦东近年来颁布实行了涉及经济、贸易、建设、规划、科技、文教等领域的七十一件法规性文件，确保了浦东开发的有序进行。</P>
