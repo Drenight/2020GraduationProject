@@ -3,69 +3,118 @@
     <head>
 		<title>在线语料标注</title>
 		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>	
+		<script src="{{static_url('jstree.min.js')}}"></script>
+		
+		    <!-- Loading Bootstrap -->
+			
+		<link href="{{static_url('css/vendor/bootstrap.min.css')}}" rel="stylesheet">
+	
+		<!-- Loading Flat UI -->
+		<link href="{{static_url('css/flat-ui.css')}}" rel="stylesheet">
+	
+		<link rel="shortcut icon" href="{{static_url('favicon.ico')}}">
+		
+		<link rel="stylesheet" href="{{static_url('themes/default/style.min.css')}}" />
+	
+		<!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
+		<!--[if lt IE 9]>
+		  <script src="../../dist/js/vendor/html5shiv.js"></script>
+		  <script src="../../dist/js/vendor/respond.min.js"></script>
+		    <![endif]-->
+		
+		<style>
+		</style>
+		
+			
 	</head>
     <body>
+		<div class='box'>
+			<div class='leftbox' style="height:5000px;width:200px;float:left;">
+			
+			<div id='jstree'>
+			</div>
+			
+			<button id='buttonXD'>演示按钮</button>
 
-		<p id=cnt></p>
-		<button id="dataFileCount">查看已标注文件数量</button>
-		<button id="tagFileCount">查看标注篇章结构树数量</button>
+			</div>
+			<div class='rightbox' style="height:5000px;width:500px;float:left;">
+				<div class='fileTree'>
+					<p id=cnt></p>	
+					<button id="dataFileCount" class="btn btn-primary">查看已标注文件数量</button>
+					<button id="tagFileCount" class="btn btn-primary">查看标注篇章结构树数量</button>	
+				</div>
+				<div id='buttons'>
+					<br>
+					<input type="text" name="fileName" id="fileName" class="form-control" placeholder="想查看的文件名字 ">
+					/data:已标注文件<br>
+					/tag:可视化标注的篇章结构树<br>
 
-		<br>----------------------------------------------------------------------<br>
-		<input type="text" name="fileName" id="fileName">想查看的文件名字<br>
-		/data:已标注文件<br>
-		/tag:可视化标注的篇章结构树<br>
+					例：/data/chtb_0001.xml<br>
+					<button id="showFile" class="btn btn-primary">查看文件</button>
+					<br>
+					<!--<xmp><p id=fileText></p></xmp>-->
+					<xmp id=fileText></xmp>
+					
+				
+					<button id="buildTree" class="btn btn-primary">展示该语料篇章结构树</button>
+					
+					<br>
+					
+					<img src="" id="b64"/>
+					
+					
+					<br>
+					
+					<input type="text" name="tagSave" id="tagSave" class="form-control" placeholder="标注结果提交路径 ">
+					例：/tag/chtb_0001_1627407027.xml<br>
+					<button id="saveFile" class="btn btn-primary">提交文件</button>
+					<br>
+					<br>
+					<input type="text" name="nodeCnt" id="nodeCnt" class="form-control" placeholder="段落数 "><br>
+					<input type="text" name="func" id="func" class="form-control" placeholder="function "><br>
+					<input type="text" name="RelWei" id="RelWie" class="form-control" placeholder="关系权重 "><br>
+					<select id="WeiAt" class="form-control">
+						<option value=1>1</option>
+						<option value=2>2</option>
+						<option value=3>3</option>
+					</select>关系重心(第几个被选中为重心,3为全选,相邻段落请先选小的，用这个调节关系重心)
+					<br>
 
-		例：/data/chtb_0001.xml<br>
-		<button id="showFile">查看文件</button>
-		<br>
-		<!--<xmp><p id=fileText></p></xmp>-->
-		<xmp id=fileText></xmp>
-		<br>----------------------------------------------------------------------<br>
-	
-		<button id="buildTree">展示该语料篇章结构树</button>
-		<img src="" id="b64"/>
-		<br>----------------------------------------------------------------------<br>
-		控制台有本次标注结果可供参考<br>
-		<input type="text" name="tagSave" id="tagSave">标注结果提交路径<br>
-		例：/tag/chtb_0001_1627407027.xml<br>
-		<button id="saveFile">提交文件</button>
-		<br>
+					<select id="rela" onchange="autoLock()" class="form-control">
+						<option value=1>解说关系</option>	
+						<option value=2>并列关系</option>
+						<option value=3>评价关系</option>
+						<option value=4>目的行为关系</option>
+						<option value=5>行为目的关系</option>
+						<option value=6>因果关系</option>			
+						<option value=7>果因关系</option>			
+						<option value=8>陈述举例关系</option>			
+						<option value=9>举例陈述关系</option>			
+						<option value=10>背景关系</option>
+						<option value=11>顺承关系</option>			
+						<option value=12>递进关系</option>			
+						<option value=13>对比关系</option>			
+						<option value=14>总结关系</option>			
+						<option value=15>补充关系</option>
+					</select>
 
-		<input type="text" name="nodeCnt" id="nodeCnt">段落数<br>
-		<input type="text" name="func" id="func">function<br>
-		<input type="text" name="RelWei" id="RelWie">关系权重(默认为0)<br>
-		<select id="WeiAt">
-			<option value=1>1</option>
-			<option value=2>2</option>
-			<option value=3>3</option>
-		</select>关系重心(第几个被选中,3为全选,相邻段落请先选小的，用这个调节关系重心)
-		<br>
+					<br>
 
+					<button id="nodeCreate" class="btn btn-primary">生成段落叶子节点</button>
 
-		<button id="nodeCreate">生成段落叶子节点</button>
-		<button id="reset">重置</button>
-		<select id="rela">
-			<option value=1>解说关系</option>	
-			<option value=2>并列关系</option>
-			<option value=3>评价关系</option>
-			<option value=4>目的行为关系</option>
-			<option value=5>行为目的关系</option>
-			<option value=6>因果关系</option>			
-			<option value=7>果因关系</option>			
-			<option value=8>陈述举例关系</option>			
-			<option value=9>举例陈述关系</option>			
-			<option value=10>背景关系</option>
-			<option value=11>顺承关系</option>			
-			<option value=12>递进关系</option>			
-			<option value=13>对比关系</option>			
-			<option value=14>总结关系</option>			
-			<option value=15>补充关系</option>
-		</select>
-		<button id="connect">连接</button>
-	
-		<br>
-		<div id="pad">
+					<button id="connect" class="btn btn-primary">连接</button>
+					<button id="reset" class="btn btn-primary">
+						<span class="fui-trash">
+							重置
+						</span>
+					</button>
+					
+					<br>
+				</div>
+				<div id="pad" style="position: absolute;">
+			</div>
+			
 		</div>
 		<br>
 	</body>
@@ -75,6 +124,8 @@
 	
 
 	<script>
+
+		
 		var parCnt=0;		//段落数
 		var nodeCnt=0;		//非段落节点数
 		var nodeLocking=[];
@@ -91,6 +142,34 @@
 		var stk=[];	//存关系节点
 
 		//Center,ChildList,_Function,ID,Layer,ParagraphPosition,ParentId,RelationNumber,RelationType,RelationWeight,StructType)		关系节点
+
+		  $(function () {
+		    // 6 当DOM准备好时创建一个实例
+		    $('#jstree').jstree({ 'core' : {
+				'data' : [
+				   'Simple root node',
+				   {
+					 'text' : 'Root node 2',
+					 'state' : {
+					   'opened' : true,
+					   'selected' : true
+					 },
+					 'children' : [
+					   { 'text' : 'Child 1' },
+					   'Child 2'
+					 ]
+				  }
+				]
+			} });
+		    // 7 绑定到树上触发的事件
+		    $('#jstree').on("changed.jstree", function (e, data) {
+		      console.log(data.selected);
+		    });
+		    // 8 与树交互-任何一种方式都可以
+		    $('#buttonXD').on('click', function () {
+		      $('#jstree').jstree(true).select_node('child_node_1');
+		    });
+		  });
 
 		$("#connect").click(function(){
 			var minX=document.getElementById(window.nodeLocking[0]).offsetTop;
@@ -119,19 +198,37 @@
 			oot=(minX+maxX)/2;
 			o.style.left=(maxY+200)+"px";
 			o.style.top=((minX+maxX)/2)+"px";
-
+			//console.log(o.offsetWidth)
 			//画线
 			for(var i=0;i<window.nodeLocking.length;i++){
-				var biasTop=document.getElementById("nodeCreate").offsetTop+30;
-				svgContainer.append("line")
-					.attr("position","absolute")
-					.attr("z-index",-1)
-					.attr("x1",ool)
-					.attr("y1",oot-biasTop)
-					.attr("x2",document.getElementById(window.nodeLocking[i]).offsetLeft)
-					.attr("y2",document.getElementById(window.nodeLocking[i]).offsetTop-biasTop)
-					.attr("stroke","black")
-					.attr("stroke-width","2px");
+				if(document.getElementById("WeiAt").value==3 ||
+					document.getElementById("WeiAt").value==1&&i==0 ||
+					document.getElementById("WeiAt").value==2&&i==1
+				){
+					svgContainer.append("line")
+						//.attr("position","absolute")
+						.attr("z-index",4)
+						.attr("x1",ool)
+						.attr("y1",oot+(o.offsetHeight/2))
+						//.attr("x1",5000)
+						//.attr("y1",5000)
+						.attr("x2",document.getElementById(window.nodeLocking[i]).offsetWidth+document.getElementById(window.nodeLocking[i]).offsetLeft)
+						.attr("y2",document.getElementById(window.nodeLocking[i]).offsetHeight/2+document.getElementById(window.nodeLocking[i]).offsetTop)
+						.attr("stroke","red")
+						.attr("stroke-width","2px");
+				}else{			
+					svgContainer.append("line")
+						//.attr("position","absolute")
+						.attr("z-index",4)
+						.attr("x1",ool)
+						.attr("y1",oot+(o.offsetHeight/2))
+						//.attr("x1",5000)
+						//.attr("y1",5000)
+						.attr("x2",document.getElementById(window.nodeLocking[i]).offsetWidth+document.getElementById(window.nodeLocking[i]).offsetLeft)
+						.attr("y2",document.getElementById(window.nodeLocking[i]).offsetHeight/2+document.getElementById(window.nodeLocking[i]).offsetTop)
+						.attr("stroke","black")
+						.attr("stroke-width","2px");
+					}
 			}
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 			
@@ -283,7 +380,8 @@
 				o.style.borderColor='#000';
 				o.style.position="absolute";
 				o.style.left=0;
-				o.style.top=(nx + 100*(i))+"px";
+				o.style.top=(100*(i))+"px";
+				o.style.zindex=2
 				document.getElementById("pad").appendChild(o);
 
 				o=null;
@@ -309,6 +407,14 @@
 		
 		});
 	
+		function autoLock(){
+			if(document.getElementById('rela').value==2){
+				document.getElementById('WeiAt').value=3;
+			}else{
+				document.getElementById('WeiAt').value=1;
+			}	
+		};
+	
 		function choose(){			//ok!
 			if(this.style.borderColor=="red"){
 				this.style.borderColor="#000";
@@ -329,7 +435,34 @@
 				$.get("/tagFileCount",function(data,status){
 						//返回数据data,返回状态status
 						if(status=="success"){
-							document.getElementById('cnt').innerHTML="篇章结构树"+data;
+							data="['chtb_0010.xml', 'chtb_0007.xml', 'chtb_0004.xml', 'chtb_0001.xml', 'chtb_0009.xml', 'chtb_0008.xml', 'chtb_0006.xml', 'chtb_0002.xml', 'chtb_0005.xml', 'chtb_0003.xml']"
+							document.getElementById('cnt').innerHTML=data;
+							
+							$('#jstree').jstree({
+								'data':[
+								       '简单的根节点',
+								       {
+								         'text' : '根节点 2',
+								         'state' : {
+								           'opened' : true,
+								           'selected' : true
+								         },
+								         'children' : [
+								           { 'text' : '子 1' },
+								           '子 2'
+								         ]
+								      }
+								    ]
+								/*[
+									{
+									'text':'root',
+									'state':{
+										'open':'true',
+											},
+									'children':data,
+									}
+								]*/								
+							});
 						}
 				});
 		});
@@ -337,7 +470,7 @@
 				$.get("/dataFileCount",function(data,status){
 						//返回数据data,返回状态status
 						if(status=="success"){
-							document.getElementById('cnt').innerHTML="已标注"+data;
+							document.getElementById('cnt').innerHTML=data;
 						}
 				});
 		});
@@ -392,6 +525,6 @@
 								
 				});
 		});
-	
+		
 	</script>	
 </html>

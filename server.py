@@ -21,6 +21,7 @@ define("port", default=8000, help="run on the given port", type=int)
 
 fileShowed="-1"
 
+
 class Tree:		#{[(,,),()],[]}
 	root = 1
 	tree={}
@@ -267,14 +268,16 @@ class buildTreeHandler(tornado.web.RequestHandler):
 if __name__ == '__main__':
 	tornado.options.parse_command_line()
 	app = tornado.web.Application(
+
 		handlers=[
-		(r'/', IndexHandler), 
-		(r'/dataFileCount',dataFileCountHandler),
-		(r'/tagFileCount',tagFileCountHandler),
-		(r'/showFile',showFileHandler),
-		(r'/buildTree',buildTreeHandler),
-		(r'/tagSave',tagSaveHandler),
-		]
+			(r'/', IndexHandler), 
+			(r'/dataFileCount',dataFileCountHandler),
+			(r'/tagFileCount',tagFileCountHandler),
+			(r'/showFile',showFileHandler),
+			(r'/buildTree',buildTreeHandler),
+			(r'/tagSave',tagSaveHandler),
+			],
+		static_path='dist'
 	)
 	http_server = tornado.httpserver.HTTPServer(app)
 	http_server.listen(options.port)
