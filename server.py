@@ -89,6 +89,15 @@ def _sub_plot(g, tree, inc):
             g.node(root, tree[first_label][i])
             g.edge(inc, root, str(i))
 
+class sqlCannedHandler(tornado.web.RequestHandler):
+	def post(self):
+		s = self.request.files
+		#s = self.request.arguments.keys()#["filexx"][0].encode('utf-8')
+		print(s)
+
+class sqlPipeLineHandler(tornado.web.RequestHandler):
+	def get(self):
+		print(self.get_argument("input"))
 
 class IndexHandler(tornado.web.RequestHandler):
 	def get(self):
@@ -295,6 +304,8 @@ if __name__ == '__main__':
 			(r'/showFile',showFileHandler),
 			(r'/buildTree',buildTreeHandler),
 			(r'/tagSave',tagSaveHandler),
+			(r'/sqlPipeLine',sqlPipeLineHandler),
+			(r'/sqlCanned',sqlCannedHandler),
 			],
 		static_path='dist'
 	)

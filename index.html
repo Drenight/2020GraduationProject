@@ -39,25 +39,35 @@
 
 			</div>
 			<div class='rightbox' style="height:5000px;width:1000px;float:left;">
+				<!--
 				<div class='fileTree'>
-
 					<button id="dataFileCount" class="btn btn-primary">查看已标注文件列表</button>
-					<!--<button id="tagFileCount" class="btn btn-primary">查看标注篇章结构树数量</button>	-->
 				</div>
+				-->
 				<div id='buttons'>
+					<h2>On-the-fly query entrance</h2>
+					<textarea id="sqlQueries" rows="10" cols="50">
+						Here for your pipeline SQL queries.
+					</textarea>
+					<!--
 					<br>
 					<input type="text" name="fileName" id="fileName" class="form-control" placeholder="想查看/修改的文件名字 ">
+					-->
 					<br>
-					<button id="showFile" class="btn btn-primary">查看文件</button>
-					<button id="buildTree" class="btn btn-primary">展示该语料篇章结构树</button>
+					<button id="submitQueries" class = "btn btn-primary">Submit Queries</button>
 
 					<br>
 					<!--<xmp><p id=fileText></p></xmp>-->
-					<xmp id=fileText></xmp>
+
+					<h2>Canned query entrance</h2>
+
+					<input id="fileSelector" type="file" accept=".sql"/>
+					<button id="cannedQueries" class = "btn btn-primary">Submit Canned Queries</button>
 					
+					<xmp id=fileText></xmp>
 					<img src="" id="b64"/>
 					
-
+<!--
 					<br>
 					<input type="text" name="nodeCnt" id="nodeCnt" class="form-control" placeholder="段落数 "><br>
 					<input type="text" name="func" id="func" class="form-control" placeholder="function "><br>
@@ -86,9 +96,9 @@
 						<option value=14>总结关系</option>			
 						<option value=15>补充关系</option>
 					</select>
-
+-->
 					<br>
-
+<!--
 					<button id="nodeCreate" class="btn btn-primary">生成段落叶子节点</button>
 
 					<button id="connect" class="btn btn-primary">连接</button>
@@ -100,6 +110,7 @@
 					<button id="saveFile" class="btn btn-primary">提交</button>
 					
 					<br>
+-->
 				</div>
 				<div id="pad" style="position: absolute;">
 			</div>
@@ -130,38 +141,23 @@
 		
 		var stk=[];	//存关系节点
 
-		//Center,ChildList,_Function,ID,Layer,ParagraphPosition,ParentId,RelationNumber,RelationType,RelationWeight,StructType)		关系节点
-
 		/*
-		  $(function () {
-		    // 6 当DOM准备好时创建一个实例
-		    $('#jstree').jstree({ 'core' : {
-				'data' : [
-				   'Simple root node',
-				   {
-					 'text' : 'Root node 2',
-					 'state' : {
-					   'opened' : true,
-					   'selected' : true
-					 },
-					 'children' : [
-					   { 'text' : 'Child 1' },
-					   'Child 2'
-					 ]
-				  }
-				]
-			} });
-		    // 7 绑定到树上触发的事件
-		    $('#jstree').on("changed.jstree", function (e, data) {
-		      console.log(data.selected);
-		    });
-		    // 8 与树交互-任何一种方式都可以
-		    $('#buttonXD').on('click', function () {
-		      $('#jstree').jstree(true).select_node('child_node_1');
-		    });
-		  });
-
-			*/
+		function uploadFile(){
+			const file = document.getElementById('fileSelector').files[0];
+			const xhr = new XMLHttpRequest();
+			const fd = new FormData();
+			
+			fd.append('file', file);
+			fd.append('xx', 'xx3');
+			xhr.open('POST', '/sqlCanned', true);
+			xhr.onreadystatechange = function(){
+				if (xhr.readyState == 4 && xhr.status == 200) {
+     				alert(xhr.responseText);
+    			}
+			};
+			xhr.send(fd);
+		}
+		*/
 
 		$("#connect").click(function(){
 			var minX=document.getElementById(window.nodeLocking[0]).offsetTop;
@@ -374,6 +370,7 @@
 			//o=null;
 		});
 
+/*
 		$("#nodeCreate").click(function(){
 			var bs=document.getElementById("nodeCnt").value;
 			//console.log(bs);
@@ -397,7 +394,8 @@
 				o=null;
 			}
 		});
-		
+*/
+
 		$("#reset").click(function(){
 			for(var i=1;i<=window.parCnt;i++){
 				var tmp=document.getElementById("par"+i);
@@ -479,7 +477,40 @@
 							$("#jstree").jstree().hide_icons();
 						}
 				});
+		});	
+
+		$("#submitQueries").click(function(){
+			var queries=$("#sqlQueries").val();
+			console.log(queries);
+			$.get("/sqlPipeLine",{input:queries},function(data,status){
+					if(status=="success"){
+						document.getElementById('fileText').innerHTML=data;
+					}
+					else{
+						alert("Ajax 失败");
+					}
+			});
 		});
+
+		$("#cannedQueries").click(function(){
+			console.log(111);
+			const file = document.getElementById('fileSelector').files[0];
+			console.log(file);
+			const xhr = new XMLHttpRequest();
+			const fd = new FormData();
+			
+			fd.append('filxx', file);
+			//fd.append('xx', 'xx3');
+			xhr.open('POST', '/sqlCanned', true);
+			xhr.onreadystatechange = function(){
+				if (xhr.readyState == 4 && xhr.status == 200) {
+     				alert(xhr.responseText);
+    			}
+			};
+			xhr.send(fd);		
+		});
+
+
 		$("#showFile").click(function(){
 				var fileName=$("#fileName").val();
 				$.get("/showFile",{message:fileName},function(data,status){
